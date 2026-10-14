@@ -1,0 +1,15 @@
+streamlit
+langchain
+langchain-community
+langchain-openai
+langchain-huggingface
+sentence-transformers
+faiss-cpu
+pypdf
+pymupdf
+pdfplumber
+pytesseract
+pillow
+python-dotenv
+requests
+beautifulsoup4
