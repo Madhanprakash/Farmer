@@ -8,7 +8,14 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
+def get_project_dir() -> Path:
+    current = Path(__file__).resolve().parent
+    if current.name == "src":
+        return current.parent
+    return current
+
+
+PROJECT_DIR = get_project_dir()
 PDF_DIR = PROJECT_DIR / "data" / "schemes"
 VECTOR_DIR = PROJECT_DIR / "vectorstore"
 INDEX_NAME = "tn_agri_index"
@@ -25,7 +32,6 @@ def main():
     print(f"PDF directory     : {PDF_DIR}")
     print(f"Vector directory  : {VECTOR_DIR}")
 
-
     if not PDF_DIR.exists():
         print("\nERROR: PDF directory does not exist.")
         print(f"Create this directory:\n{PDF_DIR}")
@@ -40,7 +46,6 @@ def main():
         sys.exit(1)
 
     print(f"\nFound {len(pdf_files)} PDF file(s).")
-
 
     documents = []
     failed_files = []
@@ -83,12 +88,7 @@ def main():
     )
 
     chunks = splitter.split_documents(documents)
-
-    # Remove chunks containing only whitespace
-    chunks = [
-        chunk for chunk in chunks
-        if chunk.page_content.strip()
-    ]
+    chunks = [chunk for chunk in chunks if chunk.page_content.strip()]
 
     if not chunks:
         print("\nERROR: No text chunks created.")
@@ -97,7 +97,6 @@ def main():
         sys.exit(1)
 
     print(f"Total text chunks created: {len(chunks)}")
-
 
     print("\nLoading embedding model...")
     print(f"Model: {EMBEDDING_MODEL}")
@@ -113,7 +112,6 @@ def main():
         print("Check your package installation and internet connection.")
         sys.exit(1)
 
-
     print("\nCreating FAISS vector index...")
 
     try:
@@ -127,7 +125,6 @@ def main():
     except Exception as exc:
         print(f"\nERROR creating or saving FAISS index: {exc}")
         sys.exit(1)
-
 
     print("\n" + "=" * 60)
     print("INGESTION COMPLETED SUCCESSFULLY")

@@ -7,9 +7,17 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-PROJECT_DIR = Path(__file__).resolve().parent.parent
+def get_project_dir() -> Path:
+    current = Path(__file__).resolve().parent
+    if current.name == "src":
+        return current.parent
+    return current
+
+
+PROJECT_DIR = get_project_dir()
 PDF_DIR = PROJECT_DIR / "data" / "schemes"
 VECTOR_DIR = PROJECT_DIR / "vectorstore"
+
 
 def main():
     pdf_files = sorted(PDF_DIR.glob("*.pdf"))
@@ -62,6 +70,7 @@ def main():
 
     print(f"FAISS index saved to {VECTOR_DIR / 'tn_agri_index'}")
     print("Ingestion completed successfully.")
+
 
 if __name__ == "__main__":
     main()
